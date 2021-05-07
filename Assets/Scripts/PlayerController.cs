@@ -5,6 +5,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Transform camTransform;
+    private GameObject pauseMenu;
+    public GameObject pauseMenuPrefab;
+
+    private void Start(){
+        pauseMenu = Instantiate(pauseMenuPrefab, Vector3.zero, Quaternion.identity);
+    }
 
     private void Update(){
         if(Input.GetKeyDown(KeyCode.Mouse0)){
@@ -13,6 +19,10 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Mouse1)){
             ClientSend.PlayerThrowItem(camTransform.forward);
+        }
+
+        if(Input.GetKeyDown(KeyCode.Escape)){
+            TogglePauseMenu();
         }
     }
 
@@ -30,5 +40,9 @@ public class PlayerController : MonoBehaviour
         };
 
         ClientSend.PlayerMovement(_inputs);
+    }
+
+    private void TogglePauseMenu(){
+        pauseMenu.GetComponent<PauseMenuManager>().TogglePauseMenu();
     }
 }

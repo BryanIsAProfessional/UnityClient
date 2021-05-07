@@ -9,7 +9,7 @@ public class Client : MonoBehaviour
     public static Client instance;
     public static int dataBufferSize = 4096;
     public string ip = "127.0.0.1";
-    public int port = 26950;
+    public int port;
     public int myId = 0;
     public TCP tcp;
     public UDP udp;
@@ -18,7 +18,8 @@ public class Client : MonoBehaviour
     private delegate void PacketHandler(Packet _packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
 
-    private void Awake(){
+    public void Awake(){
+        Debug.Log("Client is Awake");
         if(instance == null){
             instance = this;
         }
@@ -28,18 +29,33 @@ public class Client : MonoBehaviour
         }
     }
 
-    private void OnApplcationQuit(){
+    private void OnApplicationQuit(){
         Disconnect();
     }
 
-    public void ConnectToServer(){
+    public void ConnectToServer(int _port){
+        Debug.Log("ConnectToServer called");
+        if(_port < 0){
+            port = PlayerPrefs.GetInt("match_port");
+            if(port < 0 || port > 25535){
+                port = 26950;
+            }
+        }else{
+            port = _port;
+        }
+        
+        Debug.Log($"Searching for a connection on port {port}");
+
         tcp = new TCP();
         udp = new UDP();
 
         InitializeClientData();
 
-        isConnected = true;
         tcp.Connect();
+    }
+
+    public void Test(){
+        Debug.Log("Test function");
     }
 
     public class TCP{
@@ -58,6 +74,7 @@ public class Client : MonoBehaviour
 
             receiveBuffer = new byte[dataBufferSize];
             socket.BeginConnect(instance.ip, instance.port, ConnectCallback, socket);
+            instance.isConnected = socket.Connected;
         }
 
         private void ConnectCallback(IAsyncResult _result){
@@ -75,6 +92,7 @@ public class Client : MonoBehaviour
         }
 
         public void SendData(Packet _packet){
+            Debug.Log("SendData called");
             try{
                 if(socket != null){
                     stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
@@ -234,6 +252,7 @@ public class Client : MonoBehaviour
         packetHandlers = new Dictionary<int, PacketHandler>()
         {
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
+            { (int)ServerPackets.queuePop, ClientHandle.QueuePop },
             { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
             { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
             { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation },

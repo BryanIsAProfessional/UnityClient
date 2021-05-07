@@ -149,6 +149,7 @@ MonoBehaviour:
   username: 
   health: 0
   maxHealth: 100
+  itemCount: 0
   model: {fileID: 2807397228184383829}
 --- !u!114 &7343604590304053300
 MonoBehaviour:
@@ -163,6 +164,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camTransform: {fileID: 6398096036233599968}
+  pauseMenu: {fileID: 0}
+  pauseMenuPrefab: {fileID: 4813037027818980058, guid: a0cf3cd17f1ab664e912840d1232eff4, type: 3}
 --- !u!1 &7231988245252676725
 GameObject:
   m_ObjectHideFlags: 0

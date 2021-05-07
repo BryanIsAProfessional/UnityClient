@@ -18,7 +18,18 @@ public class ClientSend : MonoBehaviour
         using (Packet _packet = new Packet((int)ClientPackets.welcomeReceived))
         {
             _packet.Write(Client.instance.myId);
-            _packet.Write(UIManager.instance.usernameField.text);
+            _packet.Write("Username");
+
+            SendTCPPacket(_packet);
+        }
+    }
+
+    public static void Queue(bool _joining){
+        using (Packet _packet = new Packet((int)ClientPackets.queue))
+        {
+            _packet.Write(Client.instance.myId);
+            _packet.Write("Baby boy");
+            _packet.Write(_joining);
 
             SendTCPPacket(_packet);
         }
@@ -48,7 +59,6 @@ public class ClientSend : MonoBehaviour
     }
 
     public static void PlayerThrowItem(Vector3 _facing){
-        Debug.Log("PlayerThrowItem called");
         using (Packet _packet = new Packet((int)ClientPackets.playerThrowItem))
         {
             _packet.Write(_facing);

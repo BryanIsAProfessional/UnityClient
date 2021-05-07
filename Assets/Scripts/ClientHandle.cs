@@ -16,6 +16,19 @@ public class ClientHandle : MonoBehaviour
         Client.instance.udp.Connect(((IPEndPoint)Client.instance.tcp.socket.Client.LocalEndPoint).Port);
     }
 
+    public static void QueuePop(Packet _packet){
+
+        string _enemyUsername = _packet.ReadString();
+        int _port = _packet.ReadInt();
+
+        if(_port > 0){
+            PlayerPrefs.SetInt("match_port", _port);
+            MainMenuManager.instance.OpenLevelAfterDelay(1, 10);
+        }else{
+            Debug.Log($"Server returned an invalid port: {_port}");
+        }
+    }
+
     public static void SpawnPlayer(Packet _packet){
         int _id = _packet.ReadInt();
         string _username = _packet.ReadString();
@@ -81,7 +94,6 @@ public class ClientHandle : MonoBehaviour
     }
 
     public static void SpawnProjectile(Packet _packet){
-        Debug.Log("SpawnProjectile called");
         int _projectileId = _packet.ReadInt();
         Vector3 _position = _packet.ReadVector3();
         int _thrownByPlayer = _packet.ReadInt();
